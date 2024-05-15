@@ -109,7 +109,9 @@ function Dude(posX, width, height, image){
         }
         for (let i in shapes){
             if(collision(this, shapes[i])){
-                newGame();
+                const pauseMenu = document.getElementById('end_screen');
+                pauseMenu.classList.toggle('hide');
+                isPaused = !isPaused;
             }
         }
     };
@@ -183,6 +185,7 @@ function shapeGenerate() {
 
 // Resets the game
 function newGame(){
+    isPaused = false;
     dude = new Dude(screenWidth/2, dudeSize, dudeSize, dudeImage);
     shapes = {};
     score = 0;
@@ -222,4 +225,9 @@ document.getElementById('resetButton').addEventListener('click', function () {
     togglePauseMenu();
     newGame();
 });
-
+// Event listener for reset button
+document.getElementById('tryAgainButton').addEventListener('click', function () {
+    newGame();
+    const pauseMenu = document.getElementById('end_screen');
+    pauseMenu.classList.toggle('hide');
+});
