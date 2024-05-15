@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Apple Newton Game</title>
+        <link rel="stylesheet" href="style.css"> </head>
+    <body>
+        <div id="container">
+            <p class="controls">Control with ARROWS</p>
+            <h1>Score: <span class="score"></span></h1>
+        </div>
+        <canvas id="canvas"></canvas>
+        <div id="pauseMenu" class="hide">
+            <h2>Newton-Fall</h2>
+            <button id="resumeButton">Resume</button>
+            <button id="resetButton">Reset</button>
+        </div>
+        <div id="end_screen" class="hide">
+            <div class="menu">
+                <h2>You invented gravity.. :(</h2>
+                <button id="restartButton">Try Again</button>
+            </div>
+        </div>                
+        <script src="scripts/index.js"></script>
+    </body>
+</html>
