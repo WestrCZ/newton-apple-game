@@ -13,7 +13,7 @@ let appleImage;
 let dudeSize = 75;
 let shapeSize = 50;
 let isPaused = true;
-let hasLost = false;
+let hasLost;
 
 // Setting Canvas Dimensions
 window.addEventListener('resize', function(){
@@ -206,6 +206,7 @@ function shapeGenerate() {
 // Resets the game
 function newGame(){
     isPaused = false;
+    hasLost = false;
     dude = new Dude(screenWidth/2, dudeSize, dudeSize, dudeImage);
     shapes = {};
     score = 0;
