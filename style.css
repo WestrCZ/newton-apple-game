@@ -24,10 +24,10 @@
     left: 0;
     z-index: 2;
 }
-    .controls{
-        font-size: 1.9rem;
+  .controls{
+    font-size: 1.9rem;
 }
-#pauseMenu {
+  .menu {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -38,16 +38,16 @@
     border-radius: 10px;
     z-index: 100;
 }
-#pauseMenu h2 {
+  .menu h2 {
     color: white;
 }
-#pauseMenu button {
+  .menu button {
     margin: 10px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
 }
-.hide {
+  .hide {
     display: none;
 }
 
