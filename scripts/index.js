@@ -131,6 +131,7 @@ function Dude(posX, width, height, image){
                 isPaused = !isPaused;
                 const pauseMenu = document.getElementById('end_screen');
                 pauseMenu.classList.toggle('hide');
+
             }
         }
     };
