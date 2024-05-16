@@ -12,6 +12,8 @@ let dude;
 let appleImage;
 let dudeSize = 75;
 let shapeSize = 50;
+let isPaused = true;
+let hasLost = false;
 
 // Setting Canvas Dimensions
 window.addEventListener('resize', function(){
@@ -19,27 +21,43 @@ window.addEventListener('resize', function(){
     screenHeight = window.innerHeight;
     canvas.width = screenWidth;
     canvas.height = screenHeight;
-    initializeGame(); // Re-initialize the game when the window is resized
 });
 canvas.width = screenWidth;
 canvas.height = screenHeight;
+
+// Add an event listener to the window to execute the startGame function when the window loads
+window.addEventListener('load', startGame);
 
 // Load images and start the game when they're loaded
 let dudeImage = new Image();
 dudeImage.onload = function() {
     appleImage = new Image(); // Set the appleImage variable here
-    appleImage.onload = function() {
-        initializeGame();
-    };
     appleImage.src = "images/apple.png";
 };
 dudeImage.src = "images/newton.png";
+
+function startGame() {
+    // Show the start menu
+    const startMenu = document.getElementById('start_menu');
+    startMenu.classList.remove('hide');
+
+    // Add an event listener to the start button to start the game when clicked
+    document.getElementById('startButton').addEventListener('click', function () {
+        // Hide the start menu
+        startMenu.classList.add('hide');
+
+        // Initialize the game
+        initializeGame();
+    });
+}
+
 
 // Initialize the game
 function initializeGame() {
     // Set canvas dimensions
     canvas.width = screenWidth;
     canvas.height = screenHeight;
+    isPaused = false;
 
     // Draw background image
     ctx.drawImage(dudeImage, 0, 0, screenWidth, screenHeight);
@@ -109,9 +127,10 @@ function Dude(posX, width, height, image){
         }
         for (let i in shapes){
             if(collision(this, shapes[i])){
+                hasLost = !hasLost;
+                isPaused = !isPaused;
                 const pauseMenu = document.getElementById('end_screen');
                 pauseMenu.classList.toggle('hide');
-                isPaused = !isPaused;
             }
         }
     };
@@ -190,14 +209,14 @@ function newGame(){
     shapes = {};
     score = 0;
 }
-// Global variable to control the game loop
-let isPaused = false;
 
 // Function to toggle pause menu visibility and pause/resume the game
 function togglePauseMenu() {
+    if(!hasLost){
     const pauseMenu = document.getElementById('pauseMenu');
     pauseMenu.classList.toggle('hide');
-    isPaused = !isPaused; // Toggle the paused state
+    isPaused = !isPaused;
+}
 }
 
 // Game loop updater
