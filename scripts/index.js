@@ -218,7 +218,7 @@ function togglePauseMenu() {
     const pauseMenu = document.getElementById('pauseMenu');
     pauseMenu.classList.toggle('hide');
     isPaused = !isPaused;
-}
+    }
 }
 
 // Game loop updater
@@ -252,3 +252,4 @@ document.getElementById('tryAgainButton').addEventListener('click', function () 
     const pauseMenu = document.getElementById('end_screen');
     pauseMenu.classList.toggle('hide');
 });
+

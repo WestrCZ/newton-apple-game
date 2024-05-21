@@ -9,10 +9,14 @@
     </head>
     <body>
         <div id="container">
-            <p class="controls">Control with ARROWS</p>
+            <p class="controls">Control with <img src="images/arrows.png"></p>
             <h1>Score: <span class="score"></span></h1>
         </div>
-        <canvas id="canvas"></canvas>
+        <div class="canvas_bg">
+            <canvas id="canvas">
+            
+            </canvas>
+        </div>
         <div id="pauseMenu" class="hide menu">
             <h2>Newton-Fall</h2>
             <button id="resumeButton">Resume</button>
@@ -25,6 +29,9 @@
         <div id="start_menu">
             <div class="menu">
                 <h2>Welcome to Gravity Game</h2>
+                <div class="arrow_text">
+                    <p>Avoid the falling apples.</p>
+                </div>
                 <button id="startButton">Start</button>
             </div>
         </div>          

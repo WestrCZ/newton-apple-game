@@ -1,18 +1,22 @@
   html, body {
     width: 100%;
-    height: 100%; 
-    width: 100%;
     height: 100%;
     overflow: hidden;
+    margin: 0px;
 }
-  
+  .canvas_bg{
+    background-image: url(images/background-image.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+  }
   canvas {
     position: fixed;
     top: 0;
     left: 0;
     display: block;
-    background-image: url(images/background-image.png);
-    background-repeat:round;
+    background: transparent;
     display: block;
     width: 100%;
     height: 100%;
@@ -27,6 +31,9 @@
   .controls{
     font-size: 1.9rem;
 }
+  .controls img{
+    height: 1.9rem;
+}
   .menu {
     position: fixed;
     top: 50%;
@@ -40,6 +47,12 @@
 }
   .menu h2 {
     color: white;
+}
+.menu p {
+  color: white;
+}
+.arrow_text img {
+  height: 30px;
 }
   .menu button {
     margin: 10px;
