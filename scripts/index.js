@@ -252,4 +252,77 @@ document.getElementById('tryAgainButton').addEventListener('click', function () 
     const pauseMenu = document.getElementById('end_screen');
     pauseMenu.classList.toggle('hide');
 });
+// // // /////////////////////////////////////////////////////////////////////
+// Method to check if the user is on a mobile device
+function isMobileDevice() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
+    // Check for various mobile devices and operating systems
+    if (/android|iPhone|iPad|iPod|opera mini|blackberry|kindle|windows phone|webOS|mobile/i.test(userAgent)) {
+        return true;
+    }
+
+    // Check for touch screen capability as a secondary check
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
+        return true;
+    }
+
+    return false;
+}
+
+
+// Method to initialize the joystick
+function initializeJoystick() {
+    const joystickContainer = document.getElementById('joystickContainer');
+    joystickContainer.classList.remove('hide');
+
+    // Create the joystick
+    const joystick = nipplejs.create({
+        zone: document.getElementById('joystick'),
+        mode: 'static',
+        position: { left: '50%', top: '50%' },
+        color: 'white'
+    });
+
+    // Handle joystick movements
+    joystick.on('move', function (evt, data) {
+        const angle = data.angle.degree;
+        const distance = data.distance;
+        const maxSpeed = 5;
+        dude.Velocity.X = Math.cos(angle * Math.PI / 180) * (distance / 100) * maxSpeed;
+        dude.Velocity.Y = -Math.sin(angle * Math.PI / 180) * (distance / 100) * maxSpeed;
+    });
+
+    joystick.on('end', function () {
+        dude.Velocity.X = 0;
+        dude.Velocity.Y = 0;
+    });
+}
+
+// Adjusted startGame method to include joystick initialization for mobile devices
+function startGame() {
+    // Show the start menu
+    const startMenu = document.getElementById('start_menu');
+    startMenu.classList.remove('hide');
+
+    // Add an event listener to the start button to start the game when clicked
+    document.getElementById('startButton').addEventListener('click', function () {
+        // Hide the start menu
+        startMenu.classList.add('hide');
+
+        // Initialize the game
+        initializeGame();
+    });
+
+    // Initialize joystick if on a mobile device
+    if (isMobileDevice()) {
+        initializeJoystick();
+        // Hide the keyboard controls hint
+        document.querySelector('.controls').classList.add('hide');
+    }
+}
+
+// Call the startGame method when the window loads
+window.addEventListener('load', startGame);
+
+// Existing game code remains unchanged...
