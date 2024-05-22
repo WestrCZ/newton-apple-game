@@ -276,17 +276,21 @@ let lastTap = 0;
 let timeout;
 
 function detectDoubleTap(event) {
-  const currentTime = new Date().getTime();
-  const tapLength = currentTime - lastTap;
-
-  clearTimeout(timeout);
-
-  if (tapLength < 500 && tapLength > 0) {
-    togglePauseMenu();
-  } else {
-    // Single tap or timeout
-    timeout = setTimeout(500);
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTap;
+  
+    clearTimeout(timeout);
+  
+    if (tapLength < 500 && tapLength > 0) {
+      togglePauseMenu();
+    } else {
+      // Single tap or timeout
+      timeout = setTimeout(function() {
+        console.log("Single Tap");
+      }, 500);
+    }
+  
+    lastTap = currentTime;
   }
-  lastTap = currentTime;
-}
-document.getElementById("gameCanvas").addEventListener('touchend', detectDoubleTap);
+  
+document.getElementById("canvas").addEventListener('touchend', detectDoubleTap);
