@@ -7,7 +7,7 @@ let shapes = {};
 let shapeIndex = 0;
 let score = 0;
 let fallSpeed = 5;
-let shapeGenerateSpeed = 300;
+let shapeGenerateSpeed = 300/(screenWidth/500);
 let dude;
 let appleImage;
 let dudeSize = 75;
@@ -25,16 +25,55 @@ window.addEventListener('resize', function(){
 canvas.width = screenWidth;
 canvas.height = screenHeight;
 
-// Add an event listener to the window to execute the startGame function when the window loads
-window.addEventListener('load', startGame);
-
 // Load images and start the game when they're loaded
 let dudeImage = new Image();
 dudeImage.onload = function() {
-    appleImage = new Image(); // Set the appleImage variable here
+    appleImage = new Image();
     appleImage.src = "images/apple.png";
 };
 dudeImage.src = "images/newton.png";
+
+// Method to check if the user is on a mobile device
+function isMobileDevice() {
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    // Check for various mobile devices and operating systems
+    if (/android|iPhone|iPad|iPod|opera mini|blackberry|kindle|windows phone|webOS|mobile/i.test(userAgent)) {
+        return true;
+    }
+    // Check for touch screen capability as a secondary check
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
+        return true;
+    }
+    return false;
+}
+
+// Method to initialize the joystick
+function initializeJoystick() {
+    const joystickContainer = document.getElementById('joystickContainer');
+    joystickContainer.classList.remove('hide');
+
+    // Create the joystick
+    const joystick = nipplejs.create({
+        zone: document.getElementById('joystick'),
+        mode: 'static',
+        position: { left: '50%', top: '50%' },
+        color: 'white'
+    });
+
+    // Handle joystick movements
+    joystick.on('move', function (evt, data) {
+        const angle = data.angle.degree;
+        const distance = data.distance;
+        const maxSpeed = 8;
+        dude.Velocity.X = Math.cos(angle * Math.PI / 180) * (distance / 100) * maxSpeed;
+        dude.Velocity.Y = -Math.sin(angle * Math.PI / 180) * (distance / 100) * maxSpeed;
+    });
+
+    joystick.on('end', function () {
+        dude.Velocity.X = 0;
+        dude.Velocity.Y = 0;
+    });
+}
 
 function startGame() {
     // Show the start menu
@@ -45,12 +84,19 @@ function startGame() {
     document.getElementById('startButton').addEventListener('click', function () {
         // Hide the start menu
         startMenu.classList.add('hide');
-
         // Initialize the game
         initializeGame();
     });
+    // Initialize joystick if on a mobile device
+    if (isMobileDevice()) {
+        initializeJoystick();
+        // Hide the keyboard controls hint
+        document.querySelector('.controls').classList.add('hide');
+    }
 }
 
+// Call the startGame method when the window loads
+window.addEventListener('load', startGame);
 
 // Initialize the game
 function initializeGame() {
@@ -59,9 +105,6 @@ function initializeGame() {
     canvas.height = screenHeight;
     isPaused = false;
 
-    // Draw background image
-    ctx.drawImage(dudeImage, 0, 0, screenWidth, screenHeight);
-
     // Create Dude object
     dude = new Dude(screenWidth / 2, dudeSize, dudeSize, dudeImage);
 
@@ -69,8 +112,7 @@ function initializeGame() {
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             togglePauseMenu();
-        }
-        if (e.key === 'ArrowLeft') {
+        } if (e.key === 'ArrowLeft') {
             dude.Velocity.X = -5;
         } else if (e.key === 'ArrowRight') {
             dude.Velocity.X = 5;
@@ -79,9 +121,7 @@ function initializeGame() {
         } else if (e.key === 'ArrowDown') {
             dude.Velocity.Y = 5;
         }
-        // Escape bind to toggle pause menu
     });
-
     document.addEventListener('keyup', function(e) {
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
             dude.Velocity.X = 0;
@@ -92,16 +132,18 @@ function initializeGame() {
 
     // Game loop updater
     function Updater() {
-        ctx.clearRect(0, 0, screenWidth, screenHeight);
-        for(let i in shapes){
-            shapes[i].update();
+        if (!isPaused) {
+            ctx.clearRect(0, 0, screenWidth, screenHeight);
+            for (let i in shapes) {
+                shapes[i].update();
+            }
+            dude.update();
+
+            // Display score
+            document.querySelector(".score").innerHTML = score;
+
+            requestAnimationFrame(Updater);
         }
-        dude.update();
-    
-        // Display score
-        document.querySelector(".score").innerHTML = score;  
-    
-        requestAnimationFrame(Updater);
     }
     Updater(); // Start the game loop
 
@@ -144,8 +186,6 @@ function Dude(posX, width, height, image){
                 this.Position.Y += this.Velocity.Y;
             }
         };
-        
-        
     };
     this.Draw = function(){
         ctx.drawImage(this.Image, this.Position.X, this.Position.Y, this.Width, this.Height);
@@ -177,6 +217,7 @@ function Shape(posX, width, height, image) {
     this.checkCollisions = function() {
         if (this.Position.Y >= screenHeight) {
             delete shapes[this.Index];
+            score+=10;
         }
     };
     this.updatePosition = function() {
@@ -198,8 +239,6 @@ function Shape(posX, width, height, image) {
 function shapeGenerate() {
     if(!isPaused){
     new Shape(Math.random() * screenWidth, shapeSize, shapeSize, appleImage);
-    score+=10;
-    $(".score").html(score);
     }
 }
 
@@ -221,108 +260,18 @@ function togglePauseMenu() {
     }
 }
 
-// Game loop updater
-function Updater() {
-    if (!isPaused) {
-        ctx.clearRect(0, 0, screenWidth, screenHeight);
-        for (let i in shapes) {
-            shapes[i].update();
-        }
-        dude.update();
-
-        // Display score
-        document.querySelector(".score").innerHTML = score;
-
-        requestAnimationFrame(Updater);
-    }
-}
 // Event listener for resume button
 document.getElementById('resumeButton').addEventListener('click', function () {
     togglePauseMenu();
 });
-
 // Event listener for reset button
 document.getElementById('resetButton').addEventListener('click', function () {
     togglePauseMenu();
     newGame();
 });
-// Event listener for reset button
+// Event listener for try-again button
 document.getElementById('tryAgainButton').addEventListener('click', function () {
     newGame();
     const pauseMenu = document.getElementById('end_screen');
     pauseMenu.classList.toggle('hide');
 });
-// // // /////////////////////////////////////////////////////////////////////
-// Method to check if the user is on a mobile device
-function isMobileDevice() {
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-    // Check for various mobile devices and operating systems
-    if (/android|iPhone|iPad|iPod|opera mini|blackberry|kindle|windows phone|webOS|mobile/i.test(userAgent)) {
-        return true;
-    }
-
-    // Check for touch screen capability as a secondary check
-    if ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0) {
-        return true;
-    }
-
-    return false;
-}
-
-
-// Method to initialize the joystick
-function initializeJoystick() {
-    const joystickContainer = document.getElementById('joystickContainer');
-    joystickContainer.classList.remove('hide');
-
-    // Create the joystick
-    const joystick = nipplejs.create({
-        zone: document.getElementById('joystick'),
-        mode: 'static',
-        position: { left: '50%', top: '50%' },
-        color: 'white'
-    });
-
-    // Handle joystick movements
-    joystick.on('move', function (evt, data) {
-        const angle = data.angle.degree;
-        const distance = data.distance;
-        const maxSpeed = 5;
-        dude.Velocity.X = Math.cos(angle * Math.PI / 180) * (distance / 100) * maxSpeed;
-        dude.Velocity.Y = -Math.sin(angle * Math.PI / 180) * (distance / 100) * maxSpeed;
-    });
-
-    joystick.on('end', function () {
-        dude.Velocity.X = 0;
-        dude.Velocity.Y = 0;
-    });
-}
-
-// Adjusted startGame method to include joystick initialization for mobile devices
-function startGame() {
-    // Show the start menu
-    const startMenu = document.getElementById('start_menu');
-    startMenu.classList.remove('hide');
-
-    // Add an event listener to the start button to start the game when clicked
-    document.getElementById('startButton').addEventListener('click', function () {
-        // Hide the start menu
-        startMenu.classList.add('hide');
-
-        // Initialize the game
-        initializeGame();
-    });
-
-    // Initialize joystick if on a mobile device
-    if (isMobileDevice()) {
-        initializeJoystick();
-        // Hide the keyboard controls hint
-        document.querySelector('.controls').classList.add('hide');
-    }
-}
-
-// Call the startGame method when the window loads
-window.addEventListener('load', startGame);
-
-// Existing game code remains unchanged...
