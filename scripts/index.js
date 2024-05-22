@@ -47,7 +47,7 @@ function isMobileDevice() {
     return false;
 }
 
-// Method to initialize the joystick
+// Method to initialize a joystick
 function initializeJoystick() {
     const joystickContainer = document.getElementById('joystickContainer');
     joystickContainer.classList.remove('hide');
@@ -132,7 +132,6 @@ function initializeGame() {
 
     // Game loop updater
     function Updater() {
-        if (!isPaused) {
             ctx.clearRect(0, 0, screenWidth, screenHeight);
             for (let i in shapes) {
                 shapes[i].update();
@@ -143,7 +142,6 @@ function initializeGame() {
             document.querySelector(".score").innerHTML = score;
 
             requestAnimationFrame(Updater);
-        }
     }
     Updater(); // Start the game loop
 
@@ -173,7 +171,6 @@ function Dude(posX, width, height, image){
                 isPaused = !isPaused;
                 const pauseMenu = document.getElementById('end_screen');
                 pauseMenu.classList.toggle('hide');
-
             }
         }
     };
