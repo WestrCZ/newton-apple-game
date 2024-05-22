@@ -272,3 +272,21 @@ document.getElementById('tryAgainButton').addEventListener('click', function () 
     const pauseMenu = document.getElementById('end_screen');
     pauseMenu.classList.toggle('hide');
 });
+let lastTap = 0;
+let timeout;
+
+function detectDoubleTap(event) {
+  const currentTime = new Date().getTime();
+  const tapLength = currentTime - lastTap;
+
+  clearTimeout(timeout);
+
+  if (tapLength < 500 && tapLength > 0) {
+    togglePauseMenu();
+  } else {
+    // Single tap or timeout
+    timeout = setTimeout(500);
+  }
+  lastTap = currentTime;
+}
+document.getElementById("gameCanvas").addEventListener('touchend', detectDoubleTap);
